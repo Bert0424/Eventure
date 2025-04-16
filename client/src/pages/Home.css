@@ -1,0 +1,23 @@
+.home-container {
+    background-image: url("/background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  /* Optional: Style the header and search bar for better contrast */
+  .home-container h1 {
+    color: white; /* Better visibility on dark background */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add shadow for contrast */
+  }
+  
+  .home-container .input-group {
+    max-width: 500px; /* Limit search bar width */
+    margin: 0 auto; /* Center it */
+  }
+  
+  .home-container .form-control {
+    background-color: rgba(255, 255, 255, 0.9); /* Slight transparency */
+  }
