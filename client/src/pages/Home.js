@@ -1,9 +1,9 @@
-import React from "react";
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import EventList from "../components/EventList";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import "./Home.css";
 
 function Home() {
   const [events, setEvents] = useState([]);
@@ -23,7 +23,7 @@ function Home() {
   }, [searchTerm]);
 
   return (
-    <div>
+    <div className="home-container">
       <h1 className="text-center mb-4">Find Local Events</h1>
       <div className="input-group mb-3">
         <input
