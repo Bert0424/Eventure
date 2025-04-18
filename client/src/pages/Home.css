@@ -1,0 +1,52 @@
+.home-container {
+    background-image: url('/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Keeps background in place */
+    min-height: 100vh; /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+    padding: 20px; /* Reduced if layout is affected */
+    position: relative; /* For overlay compatibility */
+  }
+  
+  .home-container h1 {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    margin-bottom: 1.5rem; /* Consistent with Bootstrap */
+  }
+  
+  .home-container .input-group {
+    max-width: 500px;
+    width: 100%; /* Responsive width */
+    margin: 0 auto; /* Center horizontally */
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent */
+    border-radius: 5px; /* Softer edges */
+  }
+  
+  .home-container .form-control,
+  .home-container .btn-outline-secondary {
+    background-color: transparent; /* Blend with input-group background */
+    border: none;
+  }
+  
+  /* Optional overlay for better readability */
+  .home-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Subtle dark overlay */
+    z-index: 1;
+  }
+  
+  .home-container > * {
+    position: relative;
+    z-index: 2; /* Content above overlay */
+  }
