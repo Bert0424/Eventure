@@ -1,0 +1,25 @@
+{
+  "name": "eventure",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "cd client && npm install && cd ../server && npm install",
+    "dev": "concurrently \"cd client && npm start\" \"cd server && npm run dev\"",
+    "start": "concurrently \"cd client && npm start\" \"cd server && npm start\"",
+    "build": "cd client && npm run build",
+    "server": "cd server && npm start",
+    "client": "cd client && npm start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "apollo-server-express": "^3.13.0",
+    "graphql": "^16.10.0"
+  }
+}

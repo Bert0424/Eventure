@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import User from '../models/user.js';
+import User from '../models/User.js';
 import { generateToken } from '../utils/generateToken.js';
 
 // Register a new user
@@ -50,18 +50,5 @@ export const loginUser = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Login failed' });
-    }
-}
-// Get user profile
-export const getUserProfile = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id).select('-password');
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.status(200).json(user);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error fetching user profile' });
     }
 }

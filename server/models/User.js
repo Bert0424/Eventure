@@ -20,26 +20,31 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 8,
   },
-  savedEvents: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Event',
-    }],
+  rsvps: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'RSVP',
+  }],
+
+  hostedEvents: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'UserEvent',
+  }]
 }, {
   timestamps: true,
 });
 
-// Hash password before saving to the database
-userSchema.pre('save', async function (next) {
+
+  userSchema.pre('save', async function (next) {
   if (this.isNew || this.isModified('password')) {
     const saltRounds = 10;
     this.password = await bcrypt.hash(this.password, saltRounds);
   }
   next();
 });
-// Compare passwords for authentication
-userSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+
+  userSchema.methods.comparePassword = async function (p) {
+  return bcrypt.compare(p, this.password);
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 export default User;
