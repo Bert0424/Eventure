@@ -1,6 +1,6 @@
 # Eventure - Local Event Finder
 
-![Eventure Screenshot](client/public/screenshot.png)
+
 
 Eventure is a web application designed to help users discover and save local events using the Ticketmaster API. With a modern, users can search for events by city, sign up or log in to save their favorite events, and manage their event list in a personal dashboard. This project was developed as part of a bootcamp, showcasing skills in React, authentication, and API integration.
 
