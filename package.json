@@ -10,7 +10,8 @@
     "start": "concurrently \"cd client && npm start\" \"cd server && npm start\"",
     "build": "cd client && npm run build",
     "server": "cd server && npm start",
-    "client": "cd client && npm start"
+    "client": "cd client && npm start",
+    "render-build": "npm install &&  npm run build"
   },
   "keywords": [],
   "author": "",
