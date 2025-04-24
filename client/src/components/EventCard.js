@@ -1,51 +1,65 @@
 import React from "react";
 import { useContext } from "react";
 import { AuthContext } from '../context/AuthContext';
-import axios from "axios";
+import { useMutation } from "@apollo/client";
+import { CREATE_EVENT } from "../graphql/events/mutations";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 function EventCard({ event }) {
   const { user } = useContext(AuthContext);
 
+  const [createEvent] = useMutation(CREATE_EVENT, {
+    onCompleted: () => {
+      toast.success("Event saved!");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
   const handleSave = async () => {
     if (!user) {
       toast.error("Please log in to save events");
       return;
     }
-    try {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/events`,
-        {
-          eventbriteId: event.id,
-          title: event.name.text,
-          description: event.description.text,
-          date: event.start.local,
-          location: event.venue?.address?.localized_multi_line_address_display?.join(", "),
-          category: event.category?.name || "General",
-        },
-        { headers: { Authorization: `Bearer ${user.token}` } }
-      );
-      toast.success("Event saved!");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to save event");
-    }
+    const input = {
+      ticketmasterId: event.id,
+      name: event.name,
+      date: event.dates?.start?.localDate,
+      time: event.dates?.start?.localTime,
+      description: event.info || "",
+      image: event.images?.[0]?.url || "",
+      category: event.classifications?.[0]?.genre?.name || "General",
+      venue: event._embedded?.venues?.[0]?.name || "Unknown Venue",
+      city: event._embedded?.venues?.[0]?.city?.name || "Unknown City",
+      url: event.url || ""
+    };
+    await createEvent({
+      variables: { input },
+      context: {
+        headers: {
+          Authorization: `Bearer ${user.token}`
+        }
+      }
+    });
   };
 
   return (
     <div className="event-card card mb-3">
       <img
-        src={event.logo?.url || "https://via.placeholder.com/300x200"}
+        src={event.images?.[0]?.url || "https://via.placeholder.com/300x200"}
         className="card-img-top"
-        alt={event.name.text}
+        alt={event.name}
       />
       <div className="card-body">
-        <h5 className="card-title">{event.name.text}</h5>
+        <h5 className="card-title">{event.name}</h5>
         <p className="card-text">
-          {new Date(event.start.local).toLocaleDateString()} |{" "}
-          {event.venue?.address?.city || "Unknown location"}
+          {event.dates?.start?.localDate || "Unknown date"} |{" "}
+          {event._embedded?.venues?.[0]?.city?.name || "Unknown city"}
         </p>
-        <p className="card-text">{event.category?.name || "General"}</p>
+        <p className="card-text">
+          {event.classifications?.[0]?.genre?.name || "General"}
+        </p>
         <button onClick={handleSave} className="btn btn-primary me-2">
           Save Event
         </button>

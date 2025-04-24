@@ -14,6 +14,19 @@ export const typeDefs = gql`
     hostedEvents: [UserEvent]
   }
 
+  type Comment {
+  id: ID!
+  eventId: ID!
+  user: User!
+  text: String!
+  createdAt: String!
+}
+
+input CreateCommentInput {
+  eventId: ID!
+  text: String!
+}
+
   type RSVP {
     id: ID!
     ticketmasterId: String
@@ -53,54 +66,69 @@ export const typeDefs = gql`
   # ===================
   # Queries
   # ===================
-  type Query {
-    me: User
+ type Query {
+  me: User
 
-    # Ticketmaster queries
-    events(keyword: String, city: String): [TicketmasterEvent]
+  # Ticketmaster queries
+  events(keyword: String, city: String): [TicketmasterEvent]
+  event(id: ID!): TicketmasterEvent
+  eventByTicketmasterId(ticketmasterId: String!): TicketmasterEvent
 
-    # App data
-    savedEvents: [RSVP]
-    myHostedEvents: [UserEvent]
-    allUserEvents: [UserEvent]
-  }
+  # App data
+  savedEvents: [RSVP]
+  myHostedEvents: [UserEvent]
+  allUserEvents: [UserEvent]
+
+  # Comments
+  getComments(eventId: ID!): [Comment]
+}
 
   # ===================
   # Mutations
   # ===================
+  
+  # Input Types
+input CreateEventInput {
+  ticketmasterId: String!
+  name: String!
+  date: String!
+  time: String!
+  description: String
+  image: String
+  category: String
+  venue: String
+  city: String
+  url: String
+}
 
-  type Mutation {
-    # Auth
-    register(username: String!, email: String!, password: String!): AuthPayload
-    login(email: String!, password: String!): AuthPayload
+type Mutation {
+  # Auth
+  register(username: String!, email: String!, password: String!): AuthPayload
+  login(email: String!, password: String!): AuthPayload
 
-    # RSVPs
-    rsvpToTicketmasterEvent(ticketmasterId: String!): RSVP
-    cancelRsvp(ticketmasterId: String!): Boolean
+  # RSVPs
+  rsvpToTicketmasterEvent(ticketmasterId: String!): RSVP
+  cancelRsvp(ticketmasterId: String!): Boolean
 
-    rsvpUserEvent(userEventId: ID!): RSVP
-    cancelUserEventRsvp(userEventId: ID!): Boolean
+  rsvpUserEvent(userEventId: ID!): RSVP
+  cancelUserEventRsvp(userEventId: ID!): Boolean
 
-    # Hosted Events
-    createUserEvent(
-      title: String!
-      description: String
-      date: String
-      time: String
-      mood: String
-      location: String
-    ): UserEvent
+  # Hosted Events
+  createEvent(input: CreateEventInput!): TicketmasterEvent
+  updateUserEvent(
+    id: ID!
+    title: String
+    description: String
+    date: String
+    time: String
+    mood: String
+    location: String
+  ): UserEvent
+  deleteUserEvent(id: ID!): Boolean
 
-    updateUserEvent(
-      id: ID!
-      title: String
-      description: String
-      date: String
-      time: String
-      mood: String
-      location: String
-    ): UserEvent
+  # Comments
+  createComment(input: CreateCommentInput!): Comment
+  deleteComment(id: ID!): Boolean
+}
 
-    deleteUserEvent(id: ID!): Boolean
-  }
 `;

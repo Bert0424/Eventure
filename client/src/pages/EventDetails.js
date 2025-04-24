@@ -1,66 +1,56 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import { useQuery } from "@apollo/client";
+import { GET_EVENT } from "../graphql/events/queries";
 import CommentForm from "../components/CommentForm";
 import CommentList from "../components/CommentList";
 import { toast } from "react-toastify";
 
 function EventDetails() {
   const { id } = useParams();
-  const [event, setEvent] = useState(null);
-  const [comments, setComments] = useState([]);
 
-  useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/events/search`, {
-          params: { city: "" }, // Broad search to find event
-        });
-        const foundEvent = res.data.find((e) => e.id === id);
-        setEvent(foundEvent);
-      } catch (err) {
-        toast.error(err.response?.data?.message || "Failed to fetch event");
-      }
-    };
+  const { data, loading, error } = useQuery(GET_EVENT, {
+    variables: { ticketmasterId: id },
+    onError: (err) => toast.error(err.message || "Failed to fetch event"),
+  });
 
-    const fetchComments = async () => {
-      try {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/comments/${id}`);
-        setComments(res.data);
-      } catch (err) {
-        toast.error(err.response?.data?.message || "Failed to fetch comments");
-      }
-    };
+  if (loading) return <p>Loading event...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
-    fetchEvent();
-    fetchComments();
-  }, [id]);
+  const event = data?.eventByTicketmasterId;
 
-  if (!event) return <div>Loading...</div>;
+  if (!event) return <p>No event details found.</p>;
 
   return (
     <div className="fade-in">
-      <h1>{event.name.text}</h1>
+      <h1>{event.name || "Untitled Event"}</h1>
       <img
-        src={event.logo?.url || "https://via.placeholder.com/600x300"}
-        alt={event.name.text}
+        src={event.image || "https://via.placeholder.com/600x300?text=No+Image"}
+        alt={event.name || "Event"}
         className="img-fluid mb-3"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = "https://via.placeholder.com/600x300?text=No+Image";
+        }}
       />
       <p>
-        <strong>Date:</strong> {new Date(event.start.local).toLocaleString()}
+        <strong>Date:</strong>{" "}
+        {event.date ? event.date : "Date TBA"}{" "}
+        {event.time && `at ${event.time}`}
       </p>
       <p>
         <strong>Location:</strong>{" "}
-        {event.venue?.address?.localized_multi_line_address_display?.join(", ") ||
-          "Unknown"}
+        {event.venue && event.city
+          ? `${event.venue}, ${event.city}`
+          : "Location TBA"}
       </p>
       <p>
-        <strong>Category:</strong> {event.category?.name || "General"}
+        <strong>Category:</strong> {event.category || "General"}
       </p>
-      <p>{event.description.text || "No description available."}</p>
-      <CommentForm eventbriteId={id} />
-      <CommentList comments={comments} />
+      <p>{event.description || "No description available."}</p>
+
+      <CommentForm eventId={id} />
+      <CommentList eventId={id} />
     </div>
   );
 }

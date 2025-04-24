@@ -1,12 +1,25 @@
 import React from "react";
 import { useState, useContext } from "react";
 import axios from "axios";
+import { useMutation } from "@apollo/client";
+import { CREATE_COMMENT } from "../graphql/comments/mutations";
 import { AuthContext } from '../context/AuthContext';
 import { toast } from "react-toastify";
 
-function CommentForm({ eventbriteId }) {
+function CommentForm({ eventId, refetchComments }) {
   const [text, setText] = useState("");
   const { user } = useContext(AuthContext);
+
+  const [createComment] = useMutation(CREATE_COMMENT, {
+    onCompleted: () => {
+      toast.success("Comment added!");
+      setText("");
+      if (refetchComments) refetchComments(); 
+    },
+    onError: (err) => {
+      toast.error(err.message || "Failed to add comment");
+    }
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,18 +27,25 @@ function CommentForm({ eventbriteId }) {
       toast.error("Please log in to comment");
       return;
     }
-    try {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/comments`,
-        { eventbriteId, text },
-        { headers: { Authorization: `Bearer ${user.token}` } }
-      );
-      setText("");
-      toast.success("Comment added!");
-      window.location.reload(); // Refresh to show new comment
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to add comment");
+
+    if (!text.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
     }
+
+    await createComment({
+      variables: {
+        input: {
+          eventId,
+          text
+        }
+      },
+      context: {
+        headers: {
+          Authorization: `Bearer ${user.token}`
+        }
+      }
+    });
   };
 
   return (
