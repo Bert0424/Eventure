@@ -17,7 +17,7 @@ import { ToastContainer } from "react-toastify"; // Updated
 import "react-toastify/dist/ReactToastify.css";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphql",
+  uri: "/graphql",
 });
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("token");
