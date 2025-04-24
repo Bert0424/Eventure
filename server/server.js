@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import connectDB from './config/db.js';
 import apiRoutes from './routes/index.js';
 import { createApolloServer } from './graphql/index.js';
