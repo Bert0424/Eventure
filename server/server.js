@@ -20,6 +20,14 @@ app.use(express.json());
 // Routes
 app.use('/api', apiRoutes);
 
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/build')));
+
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+  });
+}
+
 await createApolloServer(app);
 
 
