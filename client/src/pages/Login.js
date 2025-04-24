@@ -1,15 +1,24 @@
 import React from"react";
 import { useState, useContext } from "react";
+import { useMutation } from "@apollo/client";
+import {  } from "../graphql/users/mutations";
 import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useContext(AuthContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(email, password);
+    try {
+      await login(email, password); // delegate to AuthContext
+    } catch (err) {
+      console.error("Login error in component:", err);
+      toast.error("Login failed. Check your credentials.");
+    }
   };
 
   return (
